@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+/* 暗色模式:通过 <html class="dark"> 切换 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- 设计令牌(色值已通过色觉无障碍校验,勿凭感觉微调) ---------- */
+
+:root {
+  /* 表面与墨色 */
+  --bg: #f9f9f7;
+  --card: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --ink-3: #898781;
+  --line: #e1e0d9;
+
+  /* 分类色:蓝 / 橙 / 医学青 / 荣誉金 / AI 紫 */
+  --blue: #2a78d6;
+  --orange: #eb6834;
+  --teal: #0d9488;
+  --gold: #eda100;
+  --violet: #4a3aa7;
+
+  /* teal 顺序 ramp(条形图,值越大越深) */
+  --teal-1: #14b8a6;
+  --teal-2: #0d9488;
+  --teal-3: #0f766e;
+  --teal-4: #115e59;
+
+  /* 状态色(仅问题指标,必须配 icon+文字) */
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+}
+
+.dark {
+  --bg: #0b1220;
+  --card: #111a2c;
+  --ink: #ffffff;
+  --ink-2: #c3c2b7;
+  --ink-3: #8b8f9e;
+  --line: #1e2a41;
+
+  --blue: #3987e5;
+  --orange: #d95926;
+  --teal: #1dab8f;
+  --gold: #c98500;
+  --violet: #9085e9;
+
+  --teal-1: #2dd4bf;
+  --teal-2: #14b8a6;
+  --teal-3: #0d9488;
+  --teal-4: #0f766e;
+}
+
+/* 把 CSS 变量映射成 Tailwind 工具类(bg-bg、text-ink、text-teal 等) */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-blue: var(--blue);
+  --color-orange: var(--orange);
+  --color-teal: var(--teal);
+  --color-gold: var(--gold);
+  --color-violet: var(--violet);
+  --color-teal-1: var(--teal-1);
+  --color-teal-2: var(--teal-2);
+  --color-teal-3: var(--teal-3);
+  --color-teal-4: var(--teal-4);
+  --color-good: var(--good);
+  --color-warning: var(--warning);
+  --color-serious: var(--serious);
+  --color-critical: var(--critical);
+
+  /* 字体:中文走系统栈,数字/Latin 走自托管 Space Grotesk */
+  --font-sans: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --font-display: "Space Grotesk Variable", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* ---------- 基础样式 ---------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--teal);
+  color: #fff;
+}
+
+/* 大数字/仪表盘数字用 Space Grotesk */
+.num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 打印规则(A4 简历) ---------- */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  /* 打印时强制浅色主题 */
+  :root,
+  .dark {
+    --bg: #ffffff;
+    --card: #ffffff;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --ink-3: #898781;
+    --line: #e1e0d9;
+    --blue: #2a78d6;
+    --orange: #eb6834;
+    --teal: #0d9488;
+    --gold: #eda100;
+    --violet: #4a3aa7;
+    --teal-1: #14b8a6;
+    --teal-2: #0d9488;
+    --teal-3: #0f766e;
+    --teal-4: #115e59;
+  }
+
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* 关键兜底:未入视口的动画元素(opacity:0)打印出来是空白,强制可见 */
+  [data-animate] {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  body {
+    background: #fff !important;
+  }
+}
