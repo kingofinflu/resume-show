@@ -4,6 +4,7 @@
  *
  * 规则:
  * - 每个文本字段是 { zh, en } 双语对象;数字指标共享,不用写两遍
+ * - 同一指标多处展示(hero/实习/项目)引用同一个 Metric 常量,改一处全站同步
  * - 指标 description(口径说明)必填 —— 不写明口径的数字就是误导
  * - 增删条目 = 在对应数组里增删一个对象,章节组件不用动
  * - 派生数字(前后提升幅度、百分比格式)不要写死,由 lib/format.ts 计算
@@ -28,7 +29,7 @@ export interface Metric {
   label: L;
   /** 当前值(提升后的值),如 94.6 */
   value: number;
-  /** 单位,省略时为空字符串 */
+  /** 单位,省略时默认为 "%",计数类指标显式传 "" */
   unit?: "%" | "pp" | "x" | "个" | "周" | "天" | "";
   /** 小数位,默认 2(全站数字统一两位小数);计数类字段显式填 0 */
   precision?: number;
@@ -61,11 +62,9 @@ export interface Education extends TimelineItem {
   /** 专业 */
   major: L;
   /** 学校标签,如 "985 · 211" */
-  badge?: string;
+  badge: L;
   /** 主修课程与成绩 */
-  courses: string[];
-  /** 在校荣誉 */
-  honors: L[];
+  courses: L[];
 }
 
 export interface Experience extends TimelineItem {
@@ -79,6 +78,8 @@ export interface Experience extends TimelineItem {
   metrics: Metric[];
   /** 领域标签(产品/业务词,不是开发技术栈) */
   tags: L[];
+  /** 收束叙事段(可选,如医学背景反哺商业产品) */
+  outro?: L;
 }
 
 /** 项目(阿里夸克 4 个战役,Ch03 数据重章内容) */
@@ -98,15 +99,15 @@ export interface Project extends TimelineItem {
 
 export interface Honor {
   id: string;
-  /** 荣誉名,如 "校级优秀奖学金" */
+  /** 荣誉名(含量化信息,如 "专业学分排名年级前 30%") */
   name: L;
   /** 次数,如 2 */
   count?: number;
   /** 所属阶段 */
   stage: "fudan" | "hust";
-  /** 百分位:30 表示 "前 30%" */
+  /** 百分位:30 表示 "前 30%"(供图表使用,名称里已含该信息) */
   percentile?: number;
-  /** 级别 */
+  /** 级别(名称里已含级别词时用于分组/筛选) */
   level: "national" | "provincial" | "school";
 }
 
@@ -117,6 +118,14 @@ export interface Skill {
   level: number;
   /** 分类:数据分析 / AI 工具 / 产品设计 */
   category: "data" | "ai" | "design";
+}
+
+export interface Trait {
+  id: string;
+  title: L;
+  body: L;
+  /** 可选 emoji 图标(数据驱动,不按索引绑定) */
+  emoji?: string;
 }
 
 export interface Chapter {
@@ -152,14 +161,141 @@ export interface ResumeData {
   /** Hero KPI 行(4 个大数字) */
   heroStats: Metric[];
   education: Education[];
+  /** Ch01 收束叙事段 */
+  educationOutro: L;
   experiences: Experience[];
   projects: Project[];
+  /** Ch03 章节引言 */
+  projectsIntro: L;
   honors: Honor[];
   skills: Skill[];
   /** 自我评价(个人特色,收尾用) */
-  traits: { title: L; body: L }[];
+  traits: Trait[];
   chapters: Chapter[];
 }
+
+// ---------- 共享指标常量(单一数据源:hero/实习/项目引用同一对象) ----------
+
+const mInternships: Metric = {
+  id: "m-internships",
+  label: { zh: "大厂产品实习", en: "Product Internships" },
+  value: 2,
+  unit: "",
+  precision: 0,
+  description: { zh: "百度 + 阿里巴巴夸克 AGI 两段产品实习", en: "Two product internships at Baidu and Alibaba Quark AGI" },
+};
+
+const mProduct01: Metric = {
+  id: "m-product-01",
+  label: { zh: "AI 产品 0→1", en: "AI Product 0→1" },
+  value: 1,
+  unit: "",
+  precision: 0,
+  description: { zh: "夸克 AI 浏览器 0→1 产品落地搭建", en: "Built Quark AI browser product from 0 to 1" },
+};
+
+const mIntentAcc: Metric = {
+  id: "m-intent-acc",
+  label: { zh: "意图识别准确率", en: "Intent Accuracy" },
+  value: 94.6,
+  baseline: 78.4,
+  description: { zh: "用户意图识别准确率,由 78.40% 提升至 94.60%", en: "User intent accuracy: 78.40% → 94.60%" },
+  highlight: true,
+};
+
+const mFieldAcc: Metric = {
+  id: "m-field-acc",
+  label: { zh: "上下文关键字段准确率", en: "Key Field Accuracy" },
+  value: 86.8,
+  baseline: 55.6,
+  description: { zh: "上下文关键字段准确率,由 55.60% 提升至 86.80%", en: "Key context field accuracy: 55.60% → 86.80%" },
+};
+
+const mHallucination: Metric = {
+  id: "m-hallu",
+  label: { zh: "幻觉率", en: "Hallucination Rate" },
+  value: 3.7,
+  baseline: 13.8,
+  polarity: "down-good",
+  status: "serious",
+  description: { zh: "模型回答幻觉率,由 13.80% 降至 3.70%,通过结构化上下文、来源展示与读取失败提示降低不确定性", en: "Hallucination rate dropped from 13.80% to 3.70% via structured context and source display" },
+};
+
+const mAgentCompletion: Metric = {
+  id: "m-agent-comp",
+  label: { zh: "Agent 任务完成率", en: "Agent Task Completion" },
+  value: 90.8,
+  baseline: 53.1,
+  description: { zh: "Agent 任务完成率,从内测基线 53.10% 提升至 90.80%", en: "Agent task completion: 53.10% baseline → 90.80%" },
+};
+
+const mAgentD1: Metric = {
+  id: "m-agent-d1",
+  label: { zh: "次日留存", en: "Day-1 Retention" },
+  value: 48.6,
+  description: { zh: "使用 agent 任务功能的用户次日留存率达 48.60%", en: "Day-1 retention of agent feature users: 48.60%" },
+};
+
+const mAgentD7: Metric = {
+  id: "m-agent-d7",
+  label: { zh: "7 日留存", en: "Day-7 Retention" },
+  value: 32.7,
+  description: { zh: "7 日留存率 32.70%,有效拉动用户留存提升", en: "Day-7 retention: 32.70%" },
+};
+
+const mSkillD1: Metric = {
+  id: "m-skill-d1",
+  label: { zh: "沉淀用户次日留存", en: "Skill Users Day-1 Retention" },
+  value: 56.4,
+  description: { zh: "沉淀 skill 的用户次日留存率达 56.40%,7 日留存率 41.80%", en: "Day-1 56.40%, day-7 41.80%" },
+};
+
+const mSkillReuseD1: Metric = {
+  id: "m-skill-reuse-d1",
+  label: { zh: "复用用户次日留存", en: "Reusers Day-1 Retention" },
+  value: 63.1,
+  description: { zh: "7 天内复用 skill 的用户次日留存率达 63.10%,7 日留存率 49.50%", en: "Day-1 63.10%, day-7 49.50%" },
+  highlight: true,
+};
+
+const mMultiTask: Metric = {
+  id: "m-multi-task",
+  label: { zh: "多步任务完成率", en: "Multi-step Task Completion" },
+  value: 86.3,
+  baseline: 41.6,
+  description: { zh: "多步任务完成率,由 41.60% 提升至 86.30%", en: "41.60% → 86.30%" },
+  highlight: true,
+};
+
+const mAdoption: Metric = {
+  id: "m-adoption",
+  label: { zh: "结果采纳率", en: "Result Adoption" },
+  value: 73.5,
+  baseline: 42.8,
+  description: { zh: "结果采纳率,由 42.80% 提升至 73.50%", en: "42.80% → 73.50%" },
+};
+
+const mCtr: Metric = {
+  id: "m-ctr",
+  label: { zh: "广告点击率提升", en: "CTR Lift" },
+  value: 1.22,
+  description: { zh: "AB 试验:广告点击率显著提升 1.22%", en: "A/B test: CTR significantly lifted by 1.22%" },
+};
+
+const mCvr: Metric = {
+  id: "m-cvr",
+  label: { zh: "转化率提升", en: "CVR Lift" },
+  value: 2.15,
+  description: { zh: "AB 试验:转化率显著提升 2.15%", en: "A/B test: CVR significantly lifted by 2.15%" },
+};
+
+const mCost: Metric = {
+  id: "m-cost",
+  label: { zh: "素材配置耗时降低", en: "Config Time Reduction" },
+  value: 28.64,
+  polarity: "down-good",
+  description: { zh: "直播原生广告素材配置耗时降低约 28.64%", en: "Live native ad material config time reduced ~28.64%" },
+};
 
 // ---------- 内容 ----------
 
@@ -186,41 +322,7 @@ export const resume: ResumeData = {
     en: "Trained in epidemiology & health statistics, then shipped products at Baidu and Alibaba — building an AI browser from 0 to 1.",
   },
 
-  heroStats: [
-    {
-      id: "hero-internships",
-      label: { zh: "大厂产品实习", en: "Product Internships" },
-      value: 2,
-      unit: "",
-      precision: 0,
-      description: { zh: "百度 + 阿里巴巴夸克 AGI 两段产品实习", en: "Two product internships at Baidu and Alibaba Quark AGI" },
-    },
-    {
-      id: "hero-intent",
-      label: { zh: "意图识别准确率提升", en: "Intent Accuracy Gain" },
-      value: 94.6,
-      unit: "%",
-      baseline: 78.4,
-      description: { zh: "夸克 AI 浏览器意图识别准确率:78.4% → 94.6%", en: "Quark AI browser intent accuracy: 78.4% → 94.6%" },
-      highlight: true,
-    },
-    {
-      id: "hero-agent",
-      label: { zh: "Agent 任务完成率提升", en: "Agent Task Completion Gain" },
-      value: 90.8,
-      unit: "%",
-      baseline: 53.1,
-      description: { zh: "Agent 任务完成率:内测基线 53.1% → 90.8%", en: "Agent task completion: 53.1% baseline → 90.8%" },
-    },
-    {
-      id: "hero-01",
-      label: { zh: "AI 产品 0→1", en: "AI Product 0→1" },
-      value: 1,
-      unit: "",
-      precision: 0,
-      description: { zh: "夸克 AI 浏览器 0→1 产品落地搭建", en: "Built Quark AI browser product from 0 to 1" },
-    },
-  ],
+  heroStats: [mInternships, mIntentAcc, mAgentCompletion, mProduct01],
 
   education: [
     {
@@ -228,15 +330,14 @@ export const resume: ResumeData = {
       title: { zh: "复旦大学", en: "Fudan University" },
       subtitle: { zh: "硕士研究生", en: "Master's Degree" },
       major: { zh: "流行病与卫生统计学", en: "Epidemiology & Health Statistics" },
-      badge: "985 · 211",
+      badge: { zh: "985 · 211", en: "985 · 211" },
       start: "2024.09",
       end: "至今",
       current: true,
-      courses: ["统计方法 (A)", "经济学导论 (A-)", "高等数学 (A-)"],
-      honors: [
-        { zh: "专业学分排名年级前 30%", en: "Top 30% by GPA" },
-        { zh: "校级优秀奖学金 ×2", en: "University Excellence Scholarship ×2" },
-        { zh: "优秀学生干部 ×1", en: "Outstanding Student Leader ×1" },
+      courses: [
+        { zh: "统计方法 (A)", en: "Statistical Methods (A)" },
+        { zh: "经济学导论 (A-)", en: "Intro to Economics (A-)" },
+        { zh: "高等数学 (A-)", en: "Advanced Mathematics (A-)" },
       ],
     },
     {
@@ -244,20 +345,20 @@ export const resume: ResumeData = {
       title: { zh: "华中科技大学", en: "Huazhong University of Science & Technology" },
       subtitle: { zh: "本科", en: "Bachelor's Degree" },
       major: { zh: "预防医学", en: "Preventive Medicine" },
-      badge: "985 · 211",
+      badge: { zh: "985 · 211", en: "985 · 211" },
       start: "2019.09",
       end: "2024.06",
-      courses: ["高等数学 (90)", "计算机基础理论 (92)"],
-      honors: [
-        { zh: "专业学分排名年级前 30%", en: "Top 30% by GPA" },
-        { zh: "新生优秀奖学金 ×1", en: "Freshman Scholarship ×1" },
-        { zh: "校级三等奖学金 ×1", en: "Third-class Scholarship ×1" },
-        { zh: "校级优秀共青团员 ×2", en: "Outstanding League Member ×2" },
-        { zh: "优秀班干部 ×1", en: "Outstanding Class Leader ×1" },
-        { zh: "大学生创新创业大赛省级立项", en: "Provincial Innovation & Entrepreneurship Project" },
+      courses: [
+        { zh: "高等数学 (90)", en: "Advanced Mathematics (90)" },
+        { zh: "计算机基础理论 (92)", en: "Computer Fundamentals (92)" },
       ],
     },
   ],
+
+  educationOutro: {
+    zh: "两所 985·211 高校,专业学分排名年级前 30% —— 数据思维,从医学统计开始。",
+    en: "Two Project-985/211 universities, top 30% by GPA — data thinking, starting from medical statistics.",
+  },
 
   experiences: [
     {
@@ -285,32 +386,7 @@ export const resume: ResumeData = {
           en: "Built a six-tier evaluation system from simple Q&A to complex tasks, locating pipeline weaknesses via failure attribution",
         },
       ],
-      metrics: [
-        {
-          id: "ali-intent",
-          label: { zh: "意图识别准确率", en: "Intent Accuracy" },
-          value: 94.6,
-          baseline: 78.4,
-          description: { zh: "用户意图识别准确率,由 78.40% 提升至 94.60%", en: "User intent accuracy: 78.40% → 94.60%" },
-          highlight: true,
-        },
-        {
-          id: "ali-agent",
-          label: { zh: "Agent 任务完成率", en: "Agent Task Completion" },
-          value: 90.8,
-          baseline: 53.1,
-          description: { zh: "Agent 任务完成率,从内测基线 53.10% 提升至 90.80%", en: "Agent task completion: 53.10% baseline → 90.80%" },
-        },
-        {
-          id: "ali-hallucination",
-          label: { zh: "幻觉率", en: "Hallucination Rate" },
-          value: 3.7,
-          baseline: 13.8,
-          polarity: "down-good",
-          status: "serious",
-          description: { zh: "模型回答幻觉率,由 13.80% 降至 3.70%,通过结构化上下文、来源展示与读取失败提示降低不确定性", en: "Hallucination rate dropped from 13.80% to 3.70% via structured context and source display" },
-        },
-      ],
+      metrics: [mIntentAcc, mAgentCompletion, mHallucination],
       tags: [
         { zh: "LLM Judge", en: "LLM Judge" },
         { zh: "Agent", en: "Agent" },
@@ -344,33 +420,17 @@ export const resume: ResumeData = {
           en: "Defined ad retrieval & traffic admission rules, including whitelist/blacklist policies for high-risk industries (healthcare, education, finance)",
         },
       ],
-      metrics: [
-        {
-          id: "baidu-ctr",
-          label: { zh: "广告点击率提升", en: "CTR Lift" },
-          value: 1.22,
-          description: { zh: "AB 试验:广告点击率显著提升 1.22%", en: "A/B test: CTR significantly lifted by 1.22%" },
-        },
-        {
-          id: "baidu-cvr",
-          label: { zh: "转化率提升", en: "CVR Lift" },
-          value: 2.15,
-          description: { zh: "AB 试验:转化率显著提升 2.15%", en: "A/B test: CVR significantly lifted by 2.15%" },
-        },
-        {
-          id: "baidu-cost",
-          label: { zh: "素材配置耗时降低", en: "Config Time Reduction" },
-          value: 28.64,
-          polarity: "down-good",
-          description: { zh: "直播原生广告素材配置耗时降低约 28.64%", en: "Live native ad material config time reduced ~28.64%" },
-        },
-      ],
+      metrics: [mCtr, mCvr, mCost],
       tags: [
         { zh: "AB 实验", en: "A/B Testing" },
         { zh: "商业化", en: "Commercialization" },
         { zh: "广告平台", en: "Ad Platform" },
         { zh: "风控", en: "Risk Control" },
       ],
+      outro: {
+        zh: "医学背景在商业产品里没有浪费:针对医疗/教育/金融等高风险行业,我设计客户黑白名单与行业准入规则 —— 行业认知,成了风控能力的一部分。",
+        en: "The medical background was not wasted: I designed whitelist/blacklist and admission rules for high-risk industries like healthcare — domain knowledge became part of risk control.",
+      },
     },
   ],
 
@@ -395,32 +455,7 @@ export const resume: ResumeData = {
         zh: "设计「规则识别 + LLM Judge + 置信度评估 + 兜底容错」多层校验机制;梳理上下文读取边界与默认读取策略,通过结构化上下文、来源展示与读取失败提示降低幻觉风险。",
         en: "Designed a multi-layer validation mechanism (rules + LLM Judge + confidence + fallback), and defined context reading boundaries with structured context, source display and read-failure hints.",
       },
-      metrics: [
-        {
-          id: "prj-intent-acc",
-          label: { zh: "意图识别准确率", en: "Intent Accuracy" },
-          value: 94.6,
-          baseline: 78.4,
-          description: { zh: "意图识别准确率,由 78.4% 提升至 94.6%", en: "78.4% → 94.6%" },
-          highlight: true,
-        },
-        {
-          id: "prj-intent-field",
-          label: { zh: "上下文关键字段准确率", en: "Key Field Accuracy" },
-          value: 86.8,
-          baseline: 55.6,
-          description: { zh: "上下文关键字段准确率,由 55.6% 提升至 86.8%", en: "55.6% → 86.8%" },
-        },
-        {
-          id: "prj-intent-hallu",
-          label: { zh: "幻觉率", en: "Hallucination Rate" },
-          value: 3.7,
-          baseline: 13.8,
-          polarity: "down-good",
-          status: "serious",
-          description: { zh: "模型回答幻觉率,由 13.8% 降至 3.7%", en: "13.8% → 3.7%" },
-        },
-      ],
+      metrics: [mIntentAcc, mFieldAcc, mHallucination],
       methods: [
         { zh: "LLM Judge", en: "LLM Judge" },
         { zh: "置信度评估", en: "Confidence Scoring" },
@@ -446,28 +481,7 @@ export const resume: ResumeData = {
         zh: "依托 LLM 完成任务理解与规划;设计「识别当前状态 - 执行下一步 - 验证结果」Loop 循环;制定工具调用白名单与权限边界;搭建覆盖任务内记忆、用户偏好与流程记忆的记忆管理体系。",
         en: "LLM-driven task planning; a state→act→verify loop; tool-call whitelists and permission boundaries; and a memory system covering in-task memory, user preferences and process memory.",
       },
-      metrics: [
-        {
-          id: "prj-agent-completion",
-          label: { zh: "Agent 任务完成率", en: "Task Completion" },
-          value: 90.8,
-          baseline: 53.1,
-          description: { zh: "Agent 任务完成率,从内测基线 53.1% 提升至 90.8%", en: "53.1% baseline → 90.8%" },
-          highlight: true,
-        },
-        {
-          id: "prj-agent-d1",
-          label: { zh: "次日留存", en: "Day-1 Retention" },
-          value: 48.6,
-          description: { zh: "使用 agent 任务功能的用户次日留存率达 48.6%", en: "Day-1 retention of agent feature users: 48.6%" },
-        },
-        {
-          id: "prj-agent-d7",
-          label: { zh: "7 日留存", en: "Day-7 Retention" },
-          value: 32.7,
-          description: { zh: "7 日留存率 32.7%,有效拉动用户留存提升", en: "Day-7 retention: 32.7%" },
-        },
-      ],
+      metrics: [mAgentCompletion, mAgentD1, mAgentD7],
       methods: [
         { zh: "LLM 解析", en: "LLM Parsing" },
         { zh: "Loop 循环", en: "Loop" },
@@ -494,21 +508,7 @@ export const resume: ResumeData = {
         zh: "设置标准化 skill 保存结构与方式,通过参数化配置提高泛用性;建立 skill 复盘和版本管理体系,支持用户编辑修改与优化。",
         en: "Standardized skill storage, parameterized configuration for generalization, plus review & version management with user-editable skills.",
       },
-      metrics: [
-        {
-          id: "prj-skill-d1",
-          label: { zh: "沉淀用户次日留存", en: "Skill Users Day-1 Retention" },
-          value: 56.4,
-          description: { zh: "沉淀 skill 的用户次日留存率达 56.4%,7 日留存率 41.8%", en: "Day-1 56.4%, day-7 41.8%" },
-        },
-        {
-          id: "prj-skill-reuse-d1",
-          label: { zh: "复用用户次日留存", en: "Reusers Day-1 Retention" },
-          value: 63.1,
-          description: { zh: "7 天内复用 skill 的用户次日留存率达 63.1%,7 日留存率 49.5%", en: "Day-1 63.1%, day-7 49.5%" },
-          highlight: true,
-        },
-      ],
+      metrics: [mSkillD1, mSkillReuseD1],
       methods: [
         { zh: "参数化配置", en: "Parameterized Config" },
         { zh: "版本管理", en: "Versioning" },
@@ -534,30 +534,7 @@ export const resume: ResumeData = {
         zh: "围绕「意图识别 - 上下文管理 - Agent 执行 - 结果质量 - Skill 复用」完整链路拆解测评节点,建立任务完成率、结果采纳率、字段准确率、失败可解释率等核心指标,通过失败归因机制定位链路短板。",
         en: "Decomposed evaluation nodes across the full pipeline, built core metrics (task completion, result adoption, field accuracy, failure explainability), and located weaknesses via failure attribution.",
       },
-      metrics: [
-        {
-          id: "prj-eval-multi",
-          label: { zh: "多步任务完成率", en: "Multi-step Task Completion" },
-          value: 86.3,
-          baseline: 41.6,
-          description: { zh: "多步任务完成率,由 41.6% 提升至 86.3%", en: "41.6% → 86.3%" },
-          highlight: true,
-        },
-        {
-          id: "prj-eval-adopt",
-          label: { zh: "结果采纳率", en: "Result Adoption" },
-          value: 73.5,
-          baseline: 42.8,
-          description: { zh: "结果采纳率,由 42.8% 提升至 73.5%", en: "42.8% → 73.5%" },
-        },
-        {
-          id: "prj-eval-field",
-          label: { zh: "字段准确率", en: "Field Accuracy" },
-          value: 86.8,
-          baseline: 55.6,
-          description: { zh: "字段准确率,由 55.6% 提升至 86.8%", en: "55.6% → 86.8%" },
-        },
-      ],
+      metrics: [mMultiTask, mAdoption, mFieldAcc],
       methods: [
         { zh: "Bad Case 分析", en: "Bad Case Analysis" },
         { zh: "失败归因", en: "Failure Attribution" },
@@ -565,6 +542,11 @@ export const resume: ResumeData = {
       ],
     },
   ],
+
+  projectsIntro: {
+    zh: "四个战役,每一场都从「问题」开始,以「数据」收尾。",
+    en: "Four battles, each starting with a problem and ending with data.",
+  },
 
   honors: [
     { id: "h-fudan-rank", name: { zh: "专业学分排名年级前 30%", en: "Top 30% by GPA" }, stage: "fudan", percentile: 30, level: "school" },
@@ -591,6 +573,7 @@ export const resume: ResumeData = {
 
   traits: [
     {
+      id: "trait-logic",
       title: { zh: "注重逻辑拆解", en: "Logical Decomposition" },
       body: {
         zh: "习惯从业务目标、用户场景、链路转化和数据指标出发拆解问题,推进前先反问「为什么需要这么做」。",
@@ -598,6 +581,7 @@ export const resume: ResumeData = {
       },
     },
     {
+      id: "trait-pressure",
       title: { zh: "压力场里的务实选手", en: "Pragmatic Under Pressure" },
       body: {
         zh: "面对高压力、复杂任务时保持稳定节奏与结果导向,把精力放在解决问题上。",
@@ -605,11 +589,13 @@ export const resume: ResumeData = {
       },
     },
     {
+      id: "trait-music",
       title: { zh: "预备役音乐主理人", en: "Music Curator-in-Reserve" },
       body: {
         zh: "热爱音乐,对小提琴、大提琴和架子鼓尤其着迷,期待未来逐步解锁喜欢的乐器。",
         en: "A music lover fascinated by violin, cello and drums — planning to unlock them one day.",
       },
+      emoji: "🎻",
     },
   ],
 
