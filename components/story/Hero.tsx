@@ -35,7 +35,8 @@ function EcgLine({ reduce }: { reduce: boolean }) {
 /** Ch00 开场:姓名/人设 + 心电线 + KPI 大数字行 */
 export default function Hero() {
   const { t } = useLocale();
-  const reduce = useReducedMotion();
+  // motion v13 的 useReducedMotion 返回 boolean | null
+  const reduce = useReducedMotion() ?? false;
   // 双击彩蛋:用触发计数驱动 effect,重复触发会重置倒计时
   const [eggCount, setEggCount] = useState(0);
   const easterEgg = eggCount > 0;
