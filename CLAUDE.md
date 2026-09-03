@@ -85,8 +85,9 @@ public/                 # .nojekyll(必须)、favicon、fonts/
 ### 4. 动画约定
 
 - 全站入场动画走 `ui/Reveal.tsx`(`whileInView` + `once: true`),禁止各组件自写重复 variants
-- 章节滚动叙事骨架:外层 `min-h-[200vh]` + 内层 `sticky top-0 h-[100svh]`,`useScroll({ target, offset })` 驱动
-- 全局 `<MotionConfig reducedMotion="user">`;移动端(useIsMobile)降级为普通滚动 + 入场动画,不做 sticky scrubbing
+- 章节滚动叙事:ChapterShell 用 `useScroll` + `useTransform` 做视差(y 位移)。**不用 sticky 钉住** —— 章节内容高度不可控,sticky + overflow-hidden 会裁掉超出一屏的内容
+- 全局 `<MotionConfig reducedMotion="user">`;移动端(useIsMobile)与 `useReducedMotion` 用户禁用视差与循环动画
+- 所有动画元素必须挂 `data-animate`(打印兜底规则依赖它);纯装饰的导航元素(如下滑提示)加 `print:hidden`
 - 章节内容 SSR 输出,动画只在客户端 hydrate 后叠加
 
 ### 5. 静态导出与 basePath
