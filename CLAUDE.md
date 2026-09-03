@@ -11,6 +11,24 @@
 - **打印版**:同一份数据打印出传统 A4 简历(2 页),`Ctrl+P` 即可另存 PDF
 - **中英双语**:右上角一键切换,默认中文
 
+## 当前进度(2026-09-04 更新)
+
+**已完成**(9 个本地 commit,master 分支,工作区干净):
+- 全站功能完整:Hero 心电图 + CountUp KPI、5 章节滚动叙事、4 类图表(MetricBars/PercentileBar/SkillRadar/DataTable)、打印版 2 页 A4、中英双语、暗色模式、双击姓名彩蛋、console 彩蛋、移动端降级
+- 验证通过:静态构建、打印恰好 2 页、basePath `/resume-show/` 注入、DOM 渲染完整
+- 每个开发步骤经 haiku review 后提交
+
+**待办**:
+1. ⏸ **用户正在进行样式细节修改**(2026-09-04 起)——用户改完后走同一流程:改完 → 询问用户 → review → 询问用户 → 提交
+2. **GitHub 仓库已建好但尚未推送**:`https://github.com/kingofinflu/resume-show.git`(私有)。推送必须等用户审核网站后明确同意,推送目标仅限此仓库
+3. **数据 TODO 待用户核对**:`data/resume.ts` 中 `contact.name`(OCR 识别为"陈思言")与 `contact.title`("AI 产品经理")
+4. `public/` 有 5 个脚手架示例 SVG(file.svg、globe.svg、next.svg、vercel.svg、window.svg)未使用,可清理
+
+**用户工作流要求(必须遵守)**:
+- 每个开发步骤完成后,进入 review 之前先询问用户(用户可能换模型)
+- review 之后、git commit 之前再次询问用户
+- git push 必须经用户明确同意,绝不擅自上传
+
 ## 技术栈
 
 - Next.js 16.3.4(App Router)+ React 19.2.8 + TypeScript + Tailwind CSS 4
