@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# resume-show
 
-## Getting Started
+个人简历展示网站 —— "个人年度报告"式的滚动叙事简历:网页版做数据化 + 电影感叙事,同一份数据打印出传统 A4 简历。
 
-First, run the development server:
+- 求职方向:AI 产品经理(医学统计 × AI 产品跨界)
+- 技术栈:Next.js 16 + React 19 + TypeScript + Tailwind CSS 4 + motion,纯静态导出
+- 中英双语切换、暗色模式、移动端适配
+
+## 本地开发
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # 静态导出到 out/
+npx serve out      # 本地预览生产构建
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 改简历
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**只改 `data/resume.ts` 一个文件**:网页版、图表、打印 PDF 全部自动同步。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 每个字段带中文注释与双语 `{ zh, en }` 结构,类型校验兜底
+- 同一指标在 hero/实习/项目多处展示时引用同一个常量,改一处全站生效
+- 数字统一两位小数(计数类除外),派生数值(提升幅度等)由 `lib/format.ts` 自动计算
+- 不确定的内容标有 `TODO`,发布前请核对
 
-## Learn More
+## 部署
 
-To learn more about Next.js, take a look at the following resources:
+GitHub Pages(仓库名 `resume-show`,basePath 已配置):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. 在 GitHub 新建仓库 `resume-show`(公开 —— GitHub Pages 免费版不支持私有仓库)
+2. `git remote add origin git@github.com:<你的用户名>/resume-show.git && git push -u origin master`
+3. Settings → Pages → Source 选 **GitHub Actions**(工作流已内置)
+4. 访问 `https://<你的用户名>.github.io/resume-show/`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 打印简历
 
-## Deploy on Vercel
+网页右上角「打印简历」或 `Ctrl+P` → 另存为 PDF,输出 2 页 A4(打印版跟随当前语言)。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 项目约定
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+详见 [CLAUDE.md](CLAUDE.md):设计色板、动画约定、单一数据源规则、Skills 说明。
