@@ -2,10 +2,44 @@
 
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { resume } from "@/data/resume";
+import { resume, type Metric } from "@/data/resume";
 import { useLocale } from "@/lib/i18n";
-import { metricText, deltaText } from "@/lib/format";
+import { deltaText } from "@/lib/format";
 import { fadeUp, spring } from "@/lib/motion";
+import CountUp from "@/components/viz/CountUp";
+
+/** KPI 卡片:数字滚动到位后才显示 delta 徽章,避免 "0.00% +16.20pp" 的瞬时矛盾 */
+function KpiTile({ stat, index }: { stat: Metric; index: number }) {
+  const { t } = useLocale();
+  const reduce = useReducedMotion() ?? false;
+  const [done, setDone] = useState(false);
+
+  return (
+    <motion.div
+      data-animate
+      initial={reduce ? false : "hidden"}
+      animate="show"
+      variants={fadeUp}
+      transition={{ ...spring, duration: 0.8, delay: 0.4 + index * 0.1 }}
+      className="rounded-xl border border-line bg-card px-4 py-5"
+    >
+      <p className="text-xs text-ink-3">{t(stat.label)}</p>
+      <p className="num mt-2 text-2xl font-bold md:text-3xl">
+        <CountUp value={stat.value} precision={stat.precision ?? 2} unit={stat.unit ?? "%"} onDone={() => setDone(true)} />
+        {stat.baseline !== undefined && (
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={done || reduce ? { opacity: 1 } : undefined}
+            className="num ml-1.5 align-middle text-xs font-medium text-teal"
+          >
+            {deltaText(stat)}
+          </motion.span>
+        )}
+      </p>
+      <p className="mt-1.5 text-xs leading-relaxed text-ink-3">{t(stat.description)}</p>
+    </motion.div>
+  );
+}
 
 /** 心电/数据曲线:医学 → AI 的视觉隐喻(加载时描线一次) */
 function EcgLine({ reduce }: { reduce: boolean }) {
@@ -110,24 +144,7 @@ export default function Hero() {
         {/* KPI 大数字行 */}
         <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
           {resume.heroStats.map((stat, i) => (
-            <motion.div
-              key={stat.id}
-              data-animate
-              initial={reduce ? false : "hidden"}
-              animate="show"
-              variants={fadeUp}
-              transition={{ ...spring, duration: 0.8, delay: 0.4 + i * 0.1 }}
-              className="rounded-xl border border-line bg-card px-4 py-5"
-            >
-              <p className="text-xs text-ink-3">{t(stat.label)}</p>
-              <p className="num mt-2 text-2xl font-bold md:text-3xl">
-                {metricText(stat)}
-                {stat.baseline !== undefined && (
-                  <span className="num ml-1.5 align-middle text-xs font-medium text-teal">{deltaText(stat)}</span>
-                )}
-              </p>
-              <p className="mt-1.5 text-xs leading-relaxed text-ink-3">{t(stat.description)}</p>
-            </motion.div>
+            <KpiTile key={stat.id} stat={stat} index={i} />
           ))}
         </div>
 
