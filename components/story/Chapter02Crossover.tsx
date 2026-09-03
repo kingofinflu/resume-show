@@ -2,9 +2,11 @@
 
 import { resume } from "@/data/resume";
 import { useLocale } from "@/lib/i18n";
-import { periodText, metricText, deltaText } from "@/lib/format";
+import { periodText } from "@/lib/format";
 import Reveal from "@/components/ui/Reveal";
 import Tag from "@/components/ui/Tag";
+import MetricBars from "@/components/viz/MetricBars";
+import DataTable from "@/components/viz/DataTable";
 
 /** Ch02 跨界:百度商业产品实习(医学背景之外的第一站) */
 export default function Chapter02Crossover() {
@@ -51,20 +53,10 @@ export default function Chapter02Crossover() {
             ))}
           </ul>
 
-          {/* 指标(含口径说明,数字不写明口径就是误导) */}
-          <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {exp.metrics.map((m) => (
-              <div key={m.id} className="rounded-xl border border-line bg-bg px-4 py-3">
-                <p className="text-xs text-ink-3">{t(m.label)}</p>
-                <p className="num mt-1 text-xl font-bold">
-                  {metricText(m)}
-                  {m.baseline !== undefined && (
-                    <span className="num ml-1.5 align-middle text-xs font-medium text-teal">{deltaText(m)}</span>
-                  )}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-ink-3">{t(m.description)}</p>
-              </div>
-            ))}
+          {/* 指标:条形图 + 折叠数据表(口径说明常显) */}
+          <div className="mt-6 rounded-xl border border-line bg-bg px-4 py-4">
+            <MetricBars metrics={exp.metrics} />
+            <DataTable metrics={exp.metrics} />
           </div>
 
           <div className="mt-5 flex flex-wrap gap-2">

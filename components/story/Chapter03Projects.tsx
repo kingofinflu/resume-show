@@ -2,9 +2,10 @@
 
 import { resume } from "@/data/resume";
 import { useLocale } from "@/lib/i18n";
-import { metricText, deltaText } from "@/lib/format";
 import Reveal from "@/components/ui/Reveal";
 import Tag from "@/components/ui/Tag";
+import MetricBars from "@/components/viz/MetricBars";
+import DataTable from "@/components/viz/DataTable";
 
 /** Ch03 AI 实战:阿里夸克 AI 浏览器 4 个战役,数据重章 */
 export default function Chapter03Projects() {
@@ -53,20 +54,10 @@ export default function Chapter03Projects() {
               </div>
             </div>
 
-            {/* 数据(图表组件在后续步骤接入,此处先渲染指标瓷砖) */}
-            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {prj.metrics.map((m) => (
-                <div key={m.id} className="rounded-xl border border-line bg-bg px-4 py-3">
-                  <p className="text-xs text-ink-3">{t(m.label)}</p>
-                  <p className="num mt-1 text-xl font-bold">
-                    {metricText(m)}
-                    {m.baseline !== undefined && (
-                      <span className="num ml-1.5 align-middle text-xs font-medium text-teal">{deltaText(m)}</span>
-                    )}
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-ink-3">{t(m.description)}</p>
-                </div>
-              ))}
+            {/* 数据:条形图 + 折叠数据表 */}
+            <div className="mt-5 rounded-xl border border-line bg-bg px-4 py-4">
+              <MetricBars metrics={prj.metrics} />
+              <DataTable metrics={prj.metrics} />
             </div>
 
             {/* 关键机制 */}

@@ -3,6 +3,8 @@
 import { resume } from "@/data/resume";
 import { useLocale } from "@/lib/i18n";
 import Reveal from "@/components/ui/Reveal";
+import PercentileBar from "@/components/viz/PercentileBar";
+import SkillRadar from "@/components/viz/SkillRadar";
 
 const stageNames = {
   fudan: { zh: "复旦大学 · 硕士", en: "Fudan University · Master's" },
@@ -18,6 +20,7 @@ const skillCategories = {
 /** Ch04 荣誉与技能:数据之外,还有生活 */
 export default function Chapter04Honors() {
   const { t } = useLocale();
+  const radarSkills = resume.skills.filter((s) => s.radar);
 
   return (
     <div className="space-y-10">
@@ -35,6 +38,12 @@ export default function Chapter04Honors() {
                       {t(h.name)}
                       {h.count !== undefined && <span className="num ml-1 text-xs text-ink-3">×{h.count}</span>}
                     </p>
+                    {/* 百分位荣誉:金条可视化 */}
+                    {h.percentile !== undefined && (
+                      <div className="mt-3">
+                        <PercentileBar percentile={h.percentile} />
+                      </div>
+                    )}
                   </div>
                 ))}
             </div>
@@ -42,9 +51,10 @@ export default function Chapter04Honors() {
         ))}
       </div>
 
-      {/* 技能 */}
+      {/* 技能:雷达图(代表性技能)+ 分类清单 */}
       <Reveal delay={0.2}>
-        <div className="rounded-2xl border border-line bg-card p-6 md:p-8">
+        <div className="grid items-center gap-6 rounded-2xl border border-line bg-card p-6 md:grid-cols-2 md:p-8">
+          <SkillRadar skills={radarSkills} />
           <div className="space-y-5">
             {(Object.keys(skillCategories) as Array<keyof typeof skillCategories>).map((cat) => (
               <div key={cat}>

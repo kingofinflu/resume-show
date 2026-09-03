@@ -118,6 +118,8 @@ export interface Skill {
   level: number;
   /** 分类:数据分析 / AI 工具 / 产品设计 */
   category: "data" | "ai" | "design";
+  /** 是否进入技能雷达图(雷达图建议 ≤6 轴,选代表性技能) */
+  radar?: boolean;
 }
 
 export interface Trait {
@@ -561,14 +563,14 @@ export const resume: ResumeData = {
   ],
 
   skills: [
-    { id: "sk-mysql", name: { zh: "MySQL", en: "MySQL" }, level: 85, category: "data" },
-    { id: "sk-r", name: { zh: "R", en: "R" }, level: 80, category: "data" },
+    { id: "sk-mysql", name: { zh: "MySQL", en: "MySQL" }, level: 85, category: "data", radar: true },
+    { id: "sk-r", name: { zh: "R", en: "R" }, level: 80, category: "data", radar: true },
     { id: "sk-codex", name: { zh: "Codex", en: "Codex" }, level: 75, category: "ai" },
-    { id: "sk-claude", name: { zh: "Claude Code", en: "Claude Code" }, level: 75, category: "ai" },
-    { id: "sk-agent", name: { zh: "Agent 搭建", en: "Agent Building" }, level: 85, category: "ai" },
-    { id: "sk-vibe", name: { zh: "Vibe Coding", en: "Vibe Coding" }, level: 80, category: "ai" },
+    { id: "sk-claude", name: { zh: "Claude Code", en: "Claude Code" }, level: 75, category: "ai", radar: true },
+    { id: "sk-agent", name: { zh: "Agent 搭建", en: "Agent Building" }, level: 85, category: "ai", radar: true },
+    { id: "sk-vibe", name: { zh: "Vibe Coding", en: "Vibe Coding" }, level: 80, category: "ai", radar: true },
     { id: "sk-modaoke", name: { zh: "墨刀", en: "MockingBot" }, level: 70, category: "design" },
-    { id: "sk-figma", name: { zh: "Figma", en: "Figma" }, level: 70, category: "design" },
+    { id: "sk-figma", name: { zh: "Figma", en: "Figma" }, level: 70, category: "design", radar: true },
   ],
 
   traits: [
