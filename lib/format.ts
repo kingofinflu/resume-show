@@ -25,7 +25,15 @@ export function deltaText(m: Metric): string | null {
   return `${sign}${formatValue(Math.abs(improved), m.precision ?? 2)}pp`;
 }
 
-/** 时间区间文本,如 "2019.09 - 2024.06" / "2024.09 - 至今" */
-export function periodText(start: string, end: string): string {
-  return `${start} - ${end}`;
+/** 时间区间文本,如 "2019.09 - 2024.06";endLabel 用于双语化的"至今"(如 t({zh:"至今",en:"Present"})) */
+export function periodText(start: string, end: string, endLabel?: string): string {
+  return `${start} - ${endLabel ?? end}`;
+}
+
+/** 指标前后对比文本,如 "78.40% → 94.60%"(遵循两位小数与 unit 约定,计数类不拼 %) */
+export function rangeText(m: Metric): string {
+  if (m.baseline === undefined) return metricText(m);
+  const unit = m.unit ?? "%";
+  const to = (v: number) => `${formatValue(v, m.precision ?? 2)}${unit}`;
+  return `${to(m.baseline)} → ${to(m.value)}`;
 }
