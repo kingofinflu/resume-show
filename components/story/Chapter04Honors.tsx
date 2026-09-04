@@ -2,6 +2,7 @@
 
 import { resume } from "@/data/resume";
 import { useLocale } from "@/lib/i18n";
+import { withBase } from "@/lib/site";
 import Reveal from "@/components/ui/Reveal";
 import PercentileBar from "@/components/viz/PercentileBar";
 import SkillRadar from "@/components/viz/SkillRadar";
@@ -34,7 +35,25 @@ export default function Chapter04Honors() {
                 .filter((h) => h.stage === stage)
                 .map((h) => (
                   <div key={h.id} className="rounded-xl border border-line bg-card px-4 py-3.5">
-                    <p className="text-sm font-medium text-ink">
+                    <p className="flex items-center gap-2 text-sm font-medium text-ink">
+                      {/* 荣誉图标仅用于奖项类荣誉;百分位排名类(percentile)保持原样不放图标 */}
+                      {h.percentile === undefined && (
+                        // 荣誉图标:CSS 蒙版复用素材 alpha 通道,bg-gold 自动跟随浅/深色金色 token
+                        <span
+                          aria-hidden
+                          className="h-4 w-4 shrink-0 bg-gold"
+                          style={{
+                            maskImage: `url(${withBase("/icons/honor-icon.png")})`,
+                            WebkitMaskImage: `url(${withBase("/icons/honor-icon.png")})`,
+                            maskSize: "contain",
+                            WebkitMaskSize: "contain",
+                            maskRepeat: "no-repeat",
+                            WebkitMaskRepeat: "no-repeat",
+                            maskPosition: "center",
+                            WebkitMaskPosition: "center",
+                          }}
+                        />
+                      )}
                       {t(h.name)}
                       {h.count !== undefined && <span className="num ml-1 text-xs text-ink-3">×{h.count}</span>}
                     </p>

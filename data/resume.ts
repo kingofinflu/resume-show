@@ -113,7 +113,7 @@ export interface Honor {
   count?: number;
   /** 所属阶段 */
   stage: "fudan" | "hust";
-  /** 百分位:30 表示 "前 30%"(供图表使用,名称里已含该信息) */
+  /** 百分位:30 表示 "前 30%"。有该字段 = 百分位排名类荣誉:渲染金条可视化、不渲染奖项图标(见 Chapter04Honors);奖项类荣誉不填 */
   percentile?: number;
   /** 级别(名称里已含级别词时用于分组/筛选) */
   level: "national" | "provincial" | "school";
