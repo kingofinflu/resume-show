@@ -13,16 +13,16 @@
 
 ## 当前进度(2026-09-04 更新)
 
-**已完成**(9 个本地 commit,master 分支,工作区干净):
+**已完成**(15 个 commit,master 分支,已推送):
 - 全站功能完整:Hero 心电图 + CountUp KPI、5 章节滚动叙事、4 类图表(MetricBars/PercentileBar/SkillRadar/DataTable)、打印版 2 页 A4、中英双语、暗色模式、双击姓名彩蛋、console 彩蛋、移动端降级
-- 验证通过:静态构建、打印恰好 2 页、basePath `/resume-show/` 注入、DOM 渲染完整
-- 每个开发步骤经 haiku review 后提交
+- 样式细节修改完成(2026-09-04):Hero 文案与 0→1 KPI 展示、医学生章节校徽时间线节点(复旦圆徽/华科椭圆徽)、985·211 teal 强调标签、跨界章节 isDelta 变化量语义(pp 单位、数值列 —、变化列 ±)、「战役」→「阶段」全站替换、幻觉率实际方向符号(-10.10pp)、荣誉章节奖项卡片荣誉金图标(CSS 蒙版,跟随深浅色 token)
+- 每个开发步骤经 haiku review 后提交;tsc/eslint/静态构建/打印 2 页/basePath 注入/DOM 渲染均验证通过
+- **已部署上线**:仓库已公开,push 即自动构建部署;线上地址 https://kingofinflu.github.io/resume-show/(资源 200、内容渲染已验证)
 
 **待办**:
-1. ⏸ **用户正在进行样式细节修改**(2026-09-04 起)——用户改完后走同一流程:改完 → 询问用户 → review → 询问用户 → 提交
-2. **GitHub 仓库已建好但尚未推送**:`https://github.com/kingofinflu/resume-show.git`(私有)。推送必须等用户审核网站后明确同意,推送目标仅限此仓库
-3. **数据 TODO 待用户核对**:`data/resume.ts` 中 `contact.name`(OCR 识别为"陈思言")与 `contact.title`("AI 产品经理")
-4. `public/` 有 5 个脚手架示例 SVG(file.svg、globe.svg、next.svg、vercel.svg、window.svg)未使用,可清理
+1. **数据 TODO 待用户核对**:`data/resume.ts` 中 `contact.name`(OCR 识别为"陈思言")与 `contact.title`("AI 产品经理")
+2. `public/` 有 5 个脚手架示例 SVG(file.svg、globe.svg、next.svg、vercel.svg、window.svg)未使用,可清理
+3. `public/icons/荣誉_icon.png` 源素材(98KB,已被生成的 honor-icon.png 取代)——用户表示会自行删除;删除前提交时注意显式排除该文件
 
 **用户工作流要求(必须遵守)**:
 - 每个开发步骤完成后,进入 review 之前先询问用户(用户可能换模型)
@@ -141,8 +141,8 @@ public/                 # .nojekyll(必须)、favicon、fonts/
 
 ## 部署(GitHub Pages)
 
-- 仓库:**私有** `resume-show`(用户要求暂不公开;GitHub Pages 免费版仅支持公开仓库,正式发布前需改公开或另选托管平台)
-- `.github/workflows/deploy.yml`:push master → build → upload-pages-artifact → deploy-pages;仓库 Settings → Pages → Source 选 **GitHub Actions**
+- 仓库:**公开** `resume-show`(2026-09-04 起,已部署上线);线上地址 https://kingofinflu.github.io/resume-show/
+- `.github/workflows/deploy.yml`:push master → build → upload-pages-artifact → deploy-pages;仓库 Settings → Pages → Source 选 **GitHub Actions**(已配置)
 - 首次部署有几分钟生效延迟;仓库名必须与 basePath 一致
 - 推送/公开仓库等操作前必须与用户确认(红线操作)
 
