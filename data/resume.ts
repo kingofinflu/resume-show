@@ -222,14 +222,12 @@ const mFieldAcc: Metric = {
   description: { zh: "上下文关键字段准确率,由 55.60% 提升至 86.80%", en: "Key context field accuracy: 55.60% → 86.80%" },
 };
 
-const mHallucination: Metric = {
-  id: "m-hallu",
-  label: { zh: "幻觉率", en: "Hallucination Rate" },
-  value: 3.7,
-  baseline: 13.8,
-  polarity: "down-good",
-  status: "serious",
-  description: { zh: "模型回答幻觉率,由 13.80% 降至 3.70%,通过结构化上下文、来源展示与读取失败提示降低不确定性", en: "Hallucination rate dropped from 13.80% to 3.70% via structured context and source display" },
+const mContextRead: Metric = {
+  id: "m-context-read",
+  label: { zh: "上下文读取成功率", en: "Context Read Success" },
+  value: 93.7,
+  baseline: 68.2,
+  description: { zh: "上下文读取成功率,由 68.20% 提升至 93.70%", en: "Context read success rate: 68.20% → 93.70%" },
 };
 
 const mAgentCompletion: Metric = {
@@ -240,42 +238,52 @@ const mAgentCompletion: Metric = {
   description: { zh: "Agent 任务完成率,从内测基线 53.10% 提升至 90.80%", en: "Agent task completion: 53.10% baseline → 90.80%" },
 };
 
-const mAgentD1: Metric = {
-  id: "m-agent-d1",
-  label: { zh: "次日留存", en: "Day-1 Retention" },
-  value: 48.6,
-  description: { zh: "使用 agent 任务功能的用户次日留存率达 48.60%", en: "Day-1 retention of agent feature users: 48.60%" },
+const mTaskParse: Metric = {
+  id: "m-task-parse",
+  label: { zh: "任务解析准确率", en: "Task Parsing Accuracy" },
+  value: 91.2,
+  baseline: 60.8,
+  description: { zh: "任务解析准确率,由 60.80% 提升至 91.20%", en: "Task parsing accuracy: 60.80% → 91.20%" },
 };
 
-const mAgentD7: Metric = {
-  id: "m-agent-d7",
-  label: { zh: "7 日留存", en: "Day-7 Retention" },
-  value: 32.7,
-  description: { zh: "7 日留存率 32.70%,有效拉动用户留存提升", en: "Day-7 retention: 32.70%" },
+const mLoopCompletion: Metric = {
+  id: "m-loop-comp",
+  label: { zh: "Loop 完成率", en: "Loop Completion" },
+  value: 87.6,
+  baseline: 46.3,
+  description: { zh: "Loop 完成率,由 46.30% 提升至 87.60%", en: "Loop completion: 46.30% → 87.60%" },
 };
 
-const mSkillD1: Metric = {
-  id: "m-skill-d1",
-  label: { zh: "沉淀用户次日留存", en: "Skill Users Day-1 Retention" },
-  value: 56.4,
-  description: { zh: "沉淀 skill 的用户次日留存率达 56.40%,7 日留存率 41.80%", en: "Day-1 56.40%, day-7 41.80%" },
+const mToolStep: Metric = {
+  id: "m-tool-step",
+  label: { zh: "单步工具成功率", en: "Single-step Tool Success" },
+  value: 89.4,
+  baseline: 58.7,
+  description: { zh: "单步工具成功率,由 58.70% 提升至 89.40%", en: "Single-step tool success: 58.70% → 89.40%" },
 };
 
-const mSkillReuseD1: Metric = {
-  id: "m-skill-reuse-d1",
-  label: { zh: "复用用户次日留存", en: "Reusers Day-1 Retention" },
-  value: 63.1,
-  description: { zh: "7 天内复用 skill 的用户次日留存率达 63.10%,7 日留存率 49.50%", en: "Day-1 63.10%, day-7 49.50%" },
+const mSkillSave: Metric = {
+  id: "m-skill-save",
+  label: { zh: "Skill 保存率", en: "Skill Save Rate" },
+  value: 18.6,
+  description: { zh: "在触发高频任务自动沉淀机制的用户中,选择保存为 Skill 的用户占比达 18.60%", en: "Among users who triggered the high-frequency task auto-capture mechanism, 18.60% saved a Skill" },
+};
+
+const mSkillReuse: Metric = {
+  id: "m-skill-reuse",
+  label: { zh: "Skill 复用率", en: "Skill Reuse Rate" },
+  value: 41.3,
+  description: { zh: "已保存的 Skill 中,在相似任务里被再次调用的占比达 41.30%", en: "Of saved Skills, 41.30% were reused in similar tasks" },
   highlight: true,
 };
 
-const mMultiTask: Metric = {
-  id: "m-multi-task",
-  label: { zh: "多步任务完成率", en: "Multi-step Task Completion" },
-  value: 86.3,
-  baseline: 41.6,
-  description: { zh: "多步任务完成率,由 41.60% 提升至 86.30%", en: "41.60% → 86.30%" },
-  highlight: true,
+const mInterruptRate: Metric = {
+  id: "m-interrupt",
+  label: { zh: "用户中断率", en: "User Interrupt Rate" },
+  value: 9.6,
+  baseline: 31.5,
+  polarity: "down-good",
+  description: { zh: "用户中断率,由 31.50% 下降至 9.60%", en: "User interrupt rate: 31.50% → 9.60%" },
 };
 
 const mAdoption: Metric = {
@@ -339,7 +347,7 @@ export const resume: ResumeData = {
     en: "Trained in medical statistics, then shipped products at Baidu and Alibaba — building an AI browser from 0 to 1.",
   },
 
-  heroStats: [mInternships, mIntentAcc, mAgentCompletion, mProduct01],
+  heroStats: [mInternships, mAdoption, mAgentCompletion, mProduct01],
 
   education: [
     {
@@ -406,7 +414,7 @@ export const resume: ResumeData = {
           en: "Built a six-tier evaluation system from simple Q&A to complex tasks, locating pipeline weaknesses via failure attribution",
         },
       ],
-      metrics: [mIntentAcc, mAgentCompletion, mHallucination],
+      metrics: [mIntentAcc, mAgentCompletion],
       tags: [
         { zh: "LLM Judge", en: "LLM Judge" },
         { zh: "Agent", en: "Agent" },
@@ -471,7 +479,7 @@ export const resume: ResumeData = {
         zh: "设计「规则识别 + LLM Judge + 置信度评估 + 兜底容错」多层校验机制;梳理上下文读取边界与默认读取策略,通过结构化上下文、来源展示与读取失败提示降低幻觉风险。",
         en: "Designed a multi-layer validation mechanism (rules + LLM Judge + confidence + fallback), and defined context reading boundaries with structured context, source display and read-failure hints.",
       },
-      metrics: [mIntentAcc, mFieldAcc, mHallucination],
+      metrics: [mIntentAcc, mContextRead, mFieldAcc],
       methods: [
         { zh: "LLM Judge", en: "LLM Judge" },
         { zh: "置信度评估", en: "Confidence Scoring" },
@@ -497,7 +505,7 @@ export const resume: ResumeData = {
         zh: "依托 LLM 完成任务理解与规划;设计「识别当前状态 - 执行下一步 - 验证结果」Loop 循环;制定工具调用白名单与权限边界;搭建覆盖任务内记忆、用户偏好与流程记忆的记忆管理体系。",
         en: "LLM-driven task planning; a state→act→verify loop; tool-call whitelists and permission boundaries; and a memory system covering in-task memory, user preferences and process memory.",
       },
-      metrics: [mAgentCompletion, mAgentD1, mAgentD7],
+      metrics: [mTaskParse, mLoopCompletion, mToolStep],
       methods: [
         { zh: "LLM 解析", en: "LLM Parsing" },
         { zh: "Loop 循环", en: "Loop" },
@@ -524,7 +532,7 @@ export const resume: ResumeData = {
         zh: "设置标准化 skill 保存结构与方式,通过参数化配置提高泛用性;建立 skill 复盘和版本管理体系,支持用户编辑修改与优化。",
         en: "Standardized skill storage, parameterized configuration for generalization, plus review & version management with user-editable skills.",
       },
-      metrics: [mSkillD1, mSkillReuseD1],
+      metrics: [mSkillSave, mSkillReuse],
       methods: [
         { zh: "参数化配置", en: "Parameterized Config" },
         { zh: "版本管理", en: "Versioning" },
@@ -550,7 +558,9 @@ export const resume: ResumeData = {
         zh: "围绕「意图识别 - 上下文管理 - Agent 执行 - 结果质量 - Skill 复用」完整链路拆解测评节点,建立任务完成率、结果采纳率、字段准确率、失败可解释率等核心指标,通过失败归因机制定位链路短板。",
         en: "Decomposed evaluation nodes across the full pipeline, built core metrics (task completion, result adoption, field accuracy, failure explainability), and located weaknesses via failure attribution.",
       },
-      metrics: [mMultiTask, mAdoption, mFieldAcc],
+      // 阶段四以 Agent 任务完成率作为强调柱:复用同一指标常量,仅本图叠加 highlight(数字口径仍单一来源);
+      // 此副本仅限本数组内使用,勿复制到其他 metrics 数组(同 id 多实例会影响未来的 DOM id/aria 锚点)
+      metrics: [{ ...mAgentCompletion, highlight: true }, mAdoption, mInterruptRate],
       methods: [
         { zh: "Bad Case 分析", en: "Bad Case Analysis" },
         { zh: "失败归因", en: "Failure Attribution" },
