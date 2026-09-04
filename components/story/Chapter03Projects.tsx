@@ -7,13 +7,13 @@ import Tag from "@/components/ui/Tag";
 import MetricBars from "@/components/viz/MetricBars";
 import DataTable from "@/components/viz/DataTable";
 
-/** Ch03 AI 实战:阿里夸克 AI 浏览器 4 个战役,数据重章 */
+/** Ch03 AI 实战:阿里夸克 AI 浏览器 4 个阶段,数据重章 */
 export default function Chapter03Projects() {
   const { t } = useLocale();
   const exp = resume.experiences.find((e) => e.id === "exp-alibaba");
   // 数据缺失时整章不渲染(静态构建阶段即暴露数据问题,而不是运行时抛错)
   if (!exp) return null;
-  const battle = t({ zh: "战役", en: "BATTLE" });
+  const stage = t({ zh: "阶段", en: "STAGE" });
 
   return (
     <div className="space-y-6">
@@ -28,10 +28,10 @@ export default function Chapter03Projects() {
       {resume.projects.map((prj, i) => (
         <Reveal key={prj.id} delay={0.1 + i * 0.1}>
           <div className="rounded-2xl border border-line bg-card p-6 md:p-8">
-            {/* 战役头 */}
+            {/* 阶段头 */}
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <span className="num text-xs font-bold tracking-widest text-blue">
-                {battle} 0{i + 1}
+                {stage} 0{i + 1}
               </span>
               <h3 className="text-xl font-bold md:text-2xl">{t(prj.title)}</h3>
             </div>

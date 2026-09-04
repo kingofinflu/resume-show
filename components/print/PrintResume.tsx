@@ -93,7 +93,7 @@ export default function PrintResume() {
         ))}
       </section>
 
-      {/* 项目经历(4 个战役) */}
+      {/* 项目经历(4 个阶段) */}
       <section className="mt-4">
         <h2 className="text-sm font-bold">
           {t({ zh: "项目经历", en: "PROJECTS" })}

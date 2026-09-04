@@ -90,7 +90,7 @@ export interface Experience extends TimelineItem {
   outro?: L;
 }
 
-/** 项目(阿里夸克 4 个战役,Ch03 数据重章内容) */
+/** 项目(阿里夸克 4 个阶段,Ch03 数据重章内容) */
 export interface Project extends TimelineItem {
   category: "intent" | "agent-loop" | "skill" | "evaluation";
   /** 一句话概括 */
@@ -450,13 +450,13 @@ export const resume: ResumeData = {
     },
   ],
 
-  // 阿里夸克 4 个战役(Ch03 数据重章)
+  // 阿里夸克 4 个阶段(Ch03 数据重章)
   projects: [
     {
       id: "prj-intent",
       category: "intent",
       title: { zh: "用户意图识别与上下文体系", en: "Intent Recognition & Context System" },
-      subtitle: { zh: "战役一 · 让 AI 听懂用户", en: "Battle 1 · Teaching the AI to Understand" },
+      subtitle: { zh: "阶段一 · 让 AI 听懂用户", en: "Stage 1 · Teaching the AI to Understand" },
       start: "2025.08",
       end: "2025.11",
       summary: {
@@ -482,7 +482,7 @@ export const resume: ResumeData = {
       id: "prj-agent",
       category: "agent-loop",
       title: { zh: "Agent 执行链路搭建", en: "Agent Execution Pipeline" },
-      subtitle: { zh: "战役二 · 让 AI 干完活", en: "Battle 2 · Making the AI Get Things Done" },
+      subtitle: { zh: "阶段二 · 让 AI 干完活", en: "Stage 2 · Making the AI Get Things Done" },
       start: "2025.08",
       end: "2025.11",
       summary: {
@@ -509,7 +509,7 @@ export const resume: ResumeData = {
       id: "prj-skill",
       category: "skill",
       title: { zh: "Skill 沉淀与复用机制", en: "Skill Accumulation & Reuse" },
-      subtitle: { zh: "战役三 · 让经验可复用", en: "Battle 3 · Making Experience Reusable" },
+      subtitle: { zh: "阶段三 · 让经验可复用", en: "Stage 3 · Making Experience Reusable" },
       start: "2025.08",
       end: "2025.11",
       summary: {
@@ -535,7 +535,7 @@ export const resume: ResumeData = {
       id: "prj-eval",
       category: "evaluation",
       title: { zh: "Agent 测评体系与迭代机制", en: "Agent Evaluation & Iteration" },
-      subtitle: { zh: "战役四 · 用数据驱动进化", en: "Battle 4 · Data-driven Evolution" },
+      subtitle: { zh: "阶段四 · 用数据驱动进化", en: "Stage 4 · Data-driven Evolution" },
       start: "2025.08",
       end: "2025.11",
       summary: {
@@ -560,8 +560,8 @@ export const resume: ResumeData = {
   ],
 
   projectsIntro: {
-    zh: "四个战役,每一场都从「问题」开始,以「数据」收尾。",
-    en: "Four battles, each starting with a problem and ending with data.",
+    zh: "四个阶段,每一阶段都从「问题」开始,以「数据」收尾。",
+    en: "Four stages, each starting with a problem and ending with data.",
   },
 
   honors: [
@@ -640,8 +640,8 @@ export const resume: ResumeData = {
     {
       id: "projects",
       index: "03",
-      title: { zh: "AI 实战", en: "AI Battles" },
-      subtitle: { zh: "夸克 AI 浏览器的四个战役", en: "Four battles of the Quark AI Browser" },
+      title: { zh: "AI 实战", en: "AI Practice" },
+      subtitle: { zh: "夸克 AI 浏览器的四个阶段", en: "Four stages of the Quark AI Browser" },
       accent: "blue",
     },
     {

@@ -15,17 +15,17 @@ export function metricText(m: Metric): string {
 }
 
 /**
- * 变化量文本,如 "+16.20pp":
- * - 有 baseline:前后对比差,down-good(如幻觉率:数值下降 = 改善)归一化为正号,正负号表示"改善/恶化"
- * - isDelta:数值本身即变化量,按实际方向给号(down-good 如耗时降低为负号)
+ * 变化量文本(如 "-10.10pp"):
+ * - 有 baseline:符号 = 实际方向(value − baseline,幻觉率 13.80→3.70 显示 -10.10pp,
+ *   改善与否由 status 色 + 文字表达,不再翻号)
+ * - isDelta:value 存变化幅度(正数),符号由 polarity 声明(down-good 为负,如耗时降低 -28.64pp)
  * - 都不是:返回 null
  */
 export function deltaText(m: Metric): string | null {
   if (m.baseline !== undefined) {
     const raw = m.value - m.baseline;
-    const improved = m.polarity === "down-good" ? -raw : raw;
-    const sign = improved >= 0 ? "+" : "-";
-    return `${sign}${formatValue(Math.abs(improved), m.precision ?? 2)}pp`;
+    const sign = raw >= 0 ? "+" : "-";
+    return `${sign}${formatValue(Math.abs(raw), m.precision ?? 2)}pp`;
   }
   if (m.isDelta) {
     const sign = m.polarity === "down-good" ? "-" : "+";
