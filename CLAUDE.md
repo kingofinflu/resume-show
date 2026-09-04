@@ -21,8 +21,6 @@
 
 **待办**:
 1. **数据 TODO 待用户核对**:`data/resume.ts` 中 `contact.name`(OCR 识别为"陈思言")与 `contact.title`("AI 产品经理")
-2. `public/` 有 5 个脚手架示例 SVG(file.svg、globe.svg、next.svg、vercel.svg、window.svg)未使用,可清理
-3. `public/icons/荣誉_icon.png` 源素材(98KB,已被生成的 honor-icon.png 取代)——用户表示会自行删除;删除前提交时注意显式排除该文件
 
 **用户工作流要求(必须遵守)**:
 - 每个开发步骤完成后,进入 review 之前先询问用户(用户可能换模型)
