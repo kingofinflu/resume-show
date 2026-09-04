@@ -65,6 +65,10 @@ export interface Education extends TimelineItem {
   major: L;
   /** 学校标签,如 "985 · 211" */
   badge: L;
+  /** 校徽图片(以 / 开头的 public 根路径,如 "/icons/fudan-emblem.png");缺省时时间线节点显示默认 teal 圆点 */
+  logo?: string;
+  /** 素材是否自带方盒(白底方形徽,如复旦),显示时裁成圆形;透明底异形素材(如华科横向椭圆)不填,填了会被裁掉图形边缘 */
+  logoRound?: boolean;
   /** 主修课程与成绩 */
   courses: L[];
 }
@@ -336,6 +340,8 @@ export const resume: ResumeData = {
       subtitle: { zh: "硕士研究生", en: "Master's Degree" },
       major: { zh: "流行病与卫生统计学", en: "Epidemiology & Health Statistics" },
       badge: { zh: "985 · 211", en: "985 · 211" },
+      logo: "/icons/fudan-emblem.png",
+      logoRound: true,
       start: "2024.09",
       end: "至今",
       current: true,
@@ -351,6 +357,7 @@ export const resume: ResumeData = {
       subtitle: { zh: "本科", en: "Bachelor's Degree" },
       major: { zh: "预防医学", en: "Preventive Medicine" },
       badge: { zh: "985 · 211", en: "985 · 211" },
+      logo: "/icons/hust-emblem.png",
       start: "2019.09",
       end: "2024.06",
       courses: [
@@ -361,8 +368,8 @@ export const resume: ResumeData = {
   ],
 
   educationOutro: {
-    zh: "两所 985·211 高校,专业学分排名年级前 30% —— 数据思维,从医学统计开始。",
-    en: "Two Project-985/211 universities, top 30% by GPA — data thinking, starting from medical statistics.",
+    zh: "两所 985·211 高校,专业学分排名年级前 30%。",
+    en: "Two Project-985/211 universities, top 30% by GPA.",
   },
 
   experiences: [
