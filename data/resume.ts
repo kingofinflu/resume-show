@@ -33,6 +33,8 @@ export interface Metric {
   unit?: "%" | "pp" | "x" | "个" | "周" | "天" | "";
   /** 小数位,默认 2(全站数字统一两位小数);计数类字段显式填 0 */
   precision?: number;
+  /** 非数字展示文案(如 "0→1"):填了则大数字直接显示此文案、不做 CountUp 滚动;与 baseline 互斥(display 不触发 onDone,delta 徽章不会显示) */
+  display?: L;
   /** 口径说明:这个数字怎么算出来的、代表什么 —— 必填 */
   description: L;
   /** 前后对比的基线值(提升前的值)。有 baseline 时图表用对比形式展示 */
@@ -189,10 +191,11 @@ const mInternships: Metric = {
 
 const mProduct01: Metric = {
   id: "m-product-01",
-  label: { zh: "AI 产品 0→1", en: "AI Product 0→1" },
+  label: { zh: "AI 产品", en: "AI Product" },
   value: 1,
   unit: "",
   precision: 0,
+  display: { zh: "0→1", en: "0→1" },
   description: { zh: "夸克 AI 浏览器 0→1 产品落地搭建", en: "Built Quark AI browser product from 0 to 1" },
 };
 
@@ -316,12 +319,12 @@ export const resume: ResumeData = {
     title: { zh: "AI 产品经理", en: "AI Product Manager" },
     phone: "15196133770",
     email: "c841098648@163.com",
-    tagline: { zh: "医学统计 × AI 产品", en: "Medical Statistics × AI Product" },
+    tagline: { zh: "医学统计 × AI 产品经理", en: "Medical Statistics × AI Product Manager" },
   },
 
   summary: {
-    zh: "从流行病与卫生统计的医学训练出发,在百度与阿里完成两段产品实习,0→1 参与 AI 浏览器产品落地。",
-    en: "Trained in epidemiology & health statistics, then shipped products at Baidu and Alibaba — building an AI browser from 0 to 1.",
+    zh: "从医学统计出发,在百度与阿里完成两段产品实习,0→1 参与 AI 浏览器产品落地。",
+    en: "Trained in medical statistics, then shipped products at Baidu and Alibaba — building an AI browser from 0 to 1.",
   },
 
   heroStats: [mInternships, mIntentAcc, mAgentCompletion, mProduct01],

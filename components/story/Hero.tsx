@@ -25,7 +25,13 @@ function KpiTile({ stat, index }: { stat: Metric; index: number }) {
     >
       <p className="text-xs text-ink-3">{t(stat.label)}</p>
       <p className="num mt-2 text-2xl font-bold md:text-3xl">
-        <CountUp value={stat.value} precision={stat.precision ?? 2} unit={stat.unit ?? "%"} onDone={() => setDone(true)} />
+        <CountUp
+          value={stat.value}
+          precision={stat.precision ?? 2}
+          unit={stat.unit ?? "%"}
+          display={stat.display ? t(stat.display) : undefined}
+          onDone={() => setDone(true)}
+        />
         {stat.baseline !== undefined && (
           <motion.span
             initial={{ opacity: 0 }}
@@ -115,7 +121,7 @@ export default function Hero() {
           transition={{ ...spring, duration: 0.8, delay: 0.1 }}
           className="mt-3 text-base text-ink-2 md:text-lg"
         >
-          {t(resume.contact.tagline)} · {t(resume.contact.title)}
+          {t(resume.contact.tagline)}
         </motion.p>
 
         <motion.p

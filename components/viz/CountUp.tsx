@@ -10,6 +10,8 @@ interface CountUpProps {
   precision?: number;
   /** 单位后缀 */
   unit?: string;
+  /** 非数字文案(如 "0→1",须为非空字符串):有值时直接静态展示,不做滚动动画 */
+  display?: string;
   className?: string;
   /** 滚动到位时回调(用于同步显示配套元素,如 delta 徽章) */
   onDone?: () => void;
@@ -25,8 +27,9 @@ interface CountUpProps {
  *   React 重渲染会把显示拽回初始值,需改用别的方案(如完全脱离 React 的节点)。
  * - 数字滚动 span 永久 aria-hidden,最终值由旁边的 sr-only 文本承载(滚动中读 0.00% 会误导)。
  * - 减少动态效果用户:不滚动,直接保持 SSR 的最终值。
+ * - display 文案(如 "0→1")是渲染期恒定字符串,直接静态展示,两个 effect 均跳过。
  */
-export default function CountUp({ value, precision = 2, unit = "", className, onDone }: CountUpProps) {
+export default function CountUp({ value, precision = 2, unit = "", display, className, onDone }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const reduce = useReducedMotion() ?? false;
   const inView = useInView(ref, { once: true, margin: "-10% 0px" });
@@ -34,12 +37,15 @@ export default function CountUp({ value, precision = 2, unit = "", className, on
   const spring = useSpring(mv, { stiffness: 60, damping: 20 });
   // onDone 放 ref,回调身份变化不触发重订阅;触发一次后清空
   const onDoneRef = useRef(onDone);
-  onDoneRef.current = onDone;
+  // ref 写入放 effect(react-hooks/refs 规范:渲染期不写 ref)
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  }, [onDone]);
 
-  const finalText = `${formatValue(value, precision)}${unit}`;
+  const finalText = display ?? `${formatValue(value, precision)}${unit}`;
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || display) return;
     if (reduce) {
       onDoneRef.current?.();
       onDoneRef.current = undefined;
@@ -48,10 +54,10 @@ export default function CountUp({ value, precision = 2, unit = "", className, on
     // 先写 0,再从 0 滚动(SSR 文本是最终值)
     if (ref.current) ref.current.textContent = `${formatValue(0, precision)}${unit}`;
     mv.set(value);
-  }, [inView, reduce, value, mv, precision, unit]);
+  }, [inView, reduce, value, mv, precision, unit, display]);
 
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || display) return;
     const epsilon = Math.max(0.01, 0.5 * 10 ** -precision);
     const unsubscribe = spring.on("change", (v) => {
       if (ref.current) ref.current.textContent = `${formatValue(v, precision)}${unit}`;
@@ -61,7 +67,7 @@ export default function CountUp({ value, precision = 2, unit = "", className, on
       }
     });
     return unsubscribe;
-  }, [spring, reduce, precision, unit, value]);
+  }, [spring, reduce, precision, unit, value, display]);
 
   return (
     <>
