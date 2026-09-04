@@ -8,21 +8,30 @@ export function formatValue(value: number, precision = 2): string {
   return value.toFixed(precision);
 }
 
-/** 指标值 + 单位,如 "94.60%"。unit 省略时默认为 "%",计数类指标显式传 "" */
+/** 指标值 + 单位,如 "94.60%"。unit 省略时默认为 "%",计数类指标显式传 "";isDelta 指标带实际方向正负号(如 "+1.22pp"、"-28.64pp") */
 export function metricText(m: Metric): string {
-  return `${formatValue(m.value, m.precision ?? 2)}${m.unit ?? "%"}`;
+  const sign = m.isDelta ? (m.polarity === "down-good" ? "-" : "+") : "";
+  return `${sign}${formatValue(m.value, m.precision ?? 2)}${m.unit ?? "%"}`;
 }
 
 /**
- * 前后对比差(改善幅度),如 "+16.20pp"。没有 baseline 时返回 null。
- * down-good 指标(如幻觉率:数值下降 = 改善)归一化为正号,保证正负号永远表示"改善/恶化"。
+ * 变化量文本,如 "+16.20pp":
+ * - 有 baseline:前后对比差,down-good(如幻觉率:数值下降 = 改善)归一化为正号,正负号表示"改善/恶化"
+ * - isDelta:数值本身即变化量,按实际方向给号(down-good 如耗时降低为负号)
+ * - 都不是:返回 null
  */
 export function deltaText(m: Metric): string | null {
-  if (m.baseline === undefined) return null;
-  const raw = m.value - m.baseline;
-  const improved = m.polarity === "down-good" ? -raw : raw;
-  const sign = improved >= 0 ? "+" : "-";
-  return `${sign}${formatValue(Math.abs(improved), m.precision ?? 2)}pp`;
+  if (m.baseline !== undefined) {
+    const raw = m.value - m.baseline;
+    const improved = m.polarity === "down-good" ? -raw : raw;
+    const sign = improved >= 0 ? "+" : "-";
+    return `${sign}${formatValue(Math.abs(improved), m.precision ?? 2)}pp`;
+  }
+  if (m.isDelta) {
+    const sign = m.polarity === "down-good" ? "-" : "+";
+    return `${sign}${formatValue(m.value, m.precision ?? 2)}${m.unit ?? "pp"}`;
+  }
+  return null;
 }
 
 /** 时间区间文本,如 "2019.09 - 2024.06";endLabel 用于双语化的"至今"(如 t({zh:"至今",en:"Present"})) */

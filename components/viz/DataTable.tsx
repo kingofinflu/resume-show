@@ -36,8 +36,8 @@ export default function DataTable({ metrics }: { metrics: Metric[] }) {
                 <th scope="row" className="py-1.5 pr-3 font-normal text-ink">
                   {t(m.label)}
                 </th>
-                <td className="num py-1.5 pr-3">{rangeText(m)}</td>
-                <td className="num py-1.5 pr-3">{m.baseline !== undefined ? deltaText(m) : "—"}</td>
+                <td className="num py-1.5 pr-3">{m.isDelta ? "—" : rangeText(m)}</td>
+                <td className="num py-1.5 pr-3">{deltaText(m) ?? "—"}</td>
                 <td className="py-1.5 text-ink-3">{t(m.description)}</td>
               </tr>
             ))}

@@ -39,6 +39,8 @@ export interface Metric {
   description: L;
   /** 前后对比的基线值(提升前的值)。有 baseline 时图表用对比形式展示 */
   baseline?: number;
+  /** 数值本身是变化量(提升/降低幅度)而非绝对值,如 CTR 提升 1.22pp —— 表格数值列显示 —、变化列显示 ±pp;与 baseline 互斥;需显式给 unit(如 "pp"),变化列缺省按 pp */
+  isDelta?: boolean;
   /** 视觉强调(每张图最多 1 个) */
   highlight?: boolean;
   /** 数值方向(用于提升/降低的配色) */
@@ -288,22 +290,28 @@ const mCtr: Metric = {
   id: "m-ctr",
   label: { zh: "广告点击率提升", en: "CTR Lift" },
   value: 1.22,
-  description: { zh: "AB 试验:广告点击率显著提升 1.22%", en: "A/B test: CTR significantly lifted by 1.22%" },
+  unit: "pp",
+  isDelta: true,
+  description: { zh: "AB 试验:广告点击率显著提升 1.22pp", en: "A/B test: CTR significantly lifted by 1.22pp" },
 };
 
 const mCvr: Metric = {
   id: "m-cvr",
   label: { zh: "转化率提升", en: "CVR Lift" },
   value: 2.15,
-  description: { zh: "AB 试验:转化率显著提升 2.15%", en: "A/B test: CVR significantly lifted by 2.15%" },
+  unit: "pp",
+  isDelta: true,
+  description: { zh: "AB 试验:转化率显著提升 2.15pp", en: "A/B test: CVR significantly lifted by 2.15pp" },
 };
 
 const mCost: Metric = {
   id: "m-cost",
-  label: { zh: "素材配置耗时降低", en: "Config Time Reduction" },
+  label: { zh: "素材配置耗时变化", en: "Config Time Change" },
   value: 28.64,
+  unit: "pp",
+  isDelta: true,
   polarity: "down-good",
-  description: { zh: "直播原生广告素材配置耗时降低约 28.64%", en: "Live native ad material config time reduced ~28.64%" },
+  description: { zh: "直播原生广告素材配置耗时降低约 28.64pp", en: "Live native ad material config time reduced ~28.64pp" },
 };
 
 // ---------- 内容 ----------
@@ -424,8 +432,8 @@ export const resume: ResumeData = {
           en: "Designed native ad formats and conversion paths for short-video & live scenarios; A/B tests significantly lifted CTR, CVR and revenue",
         },
         {
-          zh: "建设广告投放平台侧直播原生广告能力,打通投放平台素材库与百家号视频素材,素材配置耗时降低约 28.64%",
-          en: "Built ad-platform capabilities for live native ads, cutting material configuration time by ~28.64%",
+          zh: "建设广告投放平台侧直播原生广告能力,打通投放平台素材库与百家号视频素材,素材配置耗时降低约 28.64pp",
+          en: "Built ad-platform capabilities for live native ads, cutting material configuration time by ~28.64pp",
         },
         {
           zh: "制定广告召回与流量准入规则,针对医疗/教育/金融等高风险行业设计客户黑白名单与行业准入规则",
@@ -439,10 +447,6 @@ export const resume: ResumeData = {
         { zh: "广告平台", en: "Ad Platform" },
         { zh: "风控", en: "Risk Control" },
       ],
-      outro: {
-        zh: "医学背景在商业产品里没有浪费:针对医疗/教育/金融等高风险行业,我设计客户黑白名单与行业准入规则 —— 行业认知,成了风控能力的一部分。",
-        en: "The medical background was not wasted: I designed whitelist/blacklist and admission rules for high-risk industries like healthcare — domain knowledge became part of risk control.",
-      },
     },
   ],
 

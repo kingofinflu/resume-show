@@ -2,7 +2,7 @@
 
 import { resume, type TimelineItem } from "@/data/resume";
 import { useLocale } from "@/lib/i18n";
-import { periodText, rangeText } from "@/lib/format";
+import { periodText, rangeText, deltaText } from "@/lib/format";
 
 const skillCategories = {
   data: { zh: "数据分析", en: "Data Analysis" },
@@ -83,7 +83,7 @@ export default function PrintResume() {
                     <th scope="row" className="w-2/5 border border-line px-1.5 py-0.5 text-left font-normal">
                       {t(m.label)}
                     </th>
-                    <td className="num border border-line px-1.5 py-0.5">{rangeText(m)}</td>
+                    <td className="num border border-line px-1.5 py-0.5">{m.isDelta ? deltaText(m) : rangeText(m)}</td>
                     <td className="border border-line px-1.5 py-0.5">{t(m.description)}</td>
                   </tr>
                 ))}
@@ -118,7 +118,7 @@ export default function PrintResume() {
                     <th scope="row" className="w-2/5 border border-line px-1.5 py-0.5 text-left font-normal">
                       {t(m.label)}
                     </th>
-                    <td className="num border border-line px-1.5 py-0.5">{rangeText(m)}</td>
+                    <td className="num border border-line px-1.5 py-0.5">{m.isDelta ? deltaText(m) : rangeText(m)}</td>
                     <td className="border border-line px-1.5 py-0.5">{t(m.description)}</td>
                   </tr>
                 ))}
