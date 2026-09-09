@@ -277,14 +277,6 @@ const mSkillReuse: Metric = {
   highlight: true,
 };
 
-const mInterruptRate: Metric = {
-  id: "m-interrupt",
-  label: { zh: "用户中断率", en: "User Interrupt Rate" },
-  value: 9.6,
-  baseline: 31.5,
-  polarity: "down-good",
-  description: { zh: "用户中断率,由 31.50% 下降至 9.60%", en: "User interrupt rate: 31.50% → 9.60%" },
-};
 
 const mAdoption: Metric = {
   id: "m-adoption",
@@ -479,7 +471,7 @@ export const resume: ResumeData = {
         zh: "设计「规则识别 + LLM Judge + 置信度评估 + 兜底容错」多层校验机制;梳理上下文读取边界与默认读取策略,通过结构化上下文、来源展示与读取失败提示降低幻觉风险。",
         en: "Designed a multi-layer validation mechanism (rules + LLM Judge + confidence + fallback), and defined context reading boundaries with structured context, source display and read-failure hints.",
       },
-      metrics: [mIntentAcc, mContextRead, mFieldAcc],
+      metrics: [mIntentAcc, mContextRead],
       methods: [
         { zh: "LLM Judge", en: "LLM Judge" },
         { zh: "置信度评估", en: "Confidence Scoring" },
@@ -560,7 +552,7 @@ export const resume: ResumeData = {
       },
       // 阶段四以 Agent 任务完成率作为强调柱:复用同一指标常量,仅本图叠加 highlight(数字口径仍单一来源);
       // 此副本仅限本数组内使用,勿复制到其他 metrics 数组(同 id 多实例会影响未来的 DOM id/aria 锚点)
-      metrics: [{ ...mAgentCompletion, highlight: true }, mAdoption, mInterruptRate],
+      metrics: [{ ...mAgentCompletion, highlight: true }, mAdoption, mFieldAcc],
       methods: [
         { zh: "Bad Case 分析", en: "Bad Case Analysis" },
         { zh: "失败归因", en: "Failure Attribution" },
